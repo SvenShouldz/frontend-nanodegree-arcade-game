@@ -19,7 +19,7 @@ var Engine = (function(global) {
      * create the canvas element, grab the 2D context for that canvas
      * set the canvas elements height/width and add it to the DOM.
      */
-    var doc = global.document,
+    var i, doc = global.document,
         win = global.window,
         canvas = doc.createElement('canvas'),
         ctx = canvas.getContext('2d'),
@@ -28,6 +28,8 @@ var Engine = (function(global) {
     canvas.width = conf.canvasWidth;
     canvas.height = conf.canvasHeight;
     doc.body.appendChild(canvas);
+    canvas.addEventListener("mousedown", mouseAction, false);
+
 
     /* This function serves as the kickoff point for the game loop itself
      * and handles properly calling the update and render methods.
@@ -69,6 +71,28 @@ var Engine = (function(global) {
         main();
     }
 
+    function mouseAction(event){
+        var canvax = Math.floor(event.pageX - ((window.innerWidth - canvas.width) / 2)),
+            canvay = event.pageY - 8;
+
+         console.log( "X: " + canvax + "Y: " + canvay);
+            if(canvax > 750 && canvay > 550){
+                if(conf.collision === false){
+                    conf.collision = true;
+                    console.log("COLLISION ON");
+                }else{
+                    console.log("COLLISION OFF");
+                    conf.collision = false;
+                }
+                
+            }
+
+            if(conf.endScreen === true){
+                if(canvax > 320 && canvax < 460 && canvay > 480 && canvay < 500){
+                    enemy.reset();
+                }
+            }
+    }
     /* This function is called by main (our game loop) and itself calls all
      * of the functions which may need to update entity's data. Based on how
      * you implement your collision detection (when two entities occupy the
@@ -80,7 +104,6 @@ var Engine = (function(global) {
      */
     function update(dt) {
         updateEntities(dt);
-        // checkCollisions();
     }
 
     /* This is called by the update function  and loops through all of the
@@ -94,7 +117,10 @@ var Engine = (function(global) {
         allEnemies.forEach(function(enemy) {
             enemy.update(dt);
         });
-        player.update();
+        player.update(dt);
+        if(item.active === true){
+            item.collision();
+        }
     }
 
     /* This function initially draws the "game level", it will then call
@@ -104,24 +130,27 @@ var Engine = (function(global) {
      * they are just drawing the entire screen over and over.
      */
     function render() {
+
         /* This array holds the relative URL to the image used
          * for that particular row of the game level.
          */
+
         var rowImages = [
-                'images/water-block.png',    // Top row is water
-                'images/stone-block.png',   // Row 1 of 3 of stone
-                'images/stone-block.png',   // Row 2 of 3 of stone
-                'images/stone-block.png',
-                'images/stone-block.png',   // Row 3 of 3 of stone
-                'images/grass-block.png',   // Row 2 of 2 of grass
+                'images/grass.png',    // Top row is water
+                'images/street-top.png',   // Row 1 of 3 of stone
+                'images/street-bottom.png',   // Row 2 of 3 of stone
+                'images/street-top.png',   // Row 3 of 3 of stone
+                'images/street-bottom.png',
+                'images/grass.png',   // Row 2 of 2 of grass
             ],
-            numRows = Math.floor(canvas.height / conf.rowHeight),
+            numRows = 6,
             numCols = Math.floor(canvas.width / conf.colWidth),
             row, col;
         /* Loop through the number of rows and columns we've defined above
          * and, using the rowImages array, draw the correct image for that
          * portion of the "grid"
          */
+        
         for (row = 0; row < numRows; row++) {
             for (col = 0; col < numCols; col++) {
                 /* The drawImage function of the canvas' context element
@@ -135,8 +164,21 @@ var Engine = (function(global) {
             }
         }
 
-
         renderEntities();
+
+         //UI RENDER HERE
+
+         ctx.font = "30px Arial";
+         ctx.fillText("POINTS:" + player.collect,10,590);
+
+         if(conf.endScreen === true){
+            ctx.font = "50px Arial";
+            ctx.fillStyle ="white";
+            ctx.fillText(player.collect + " Points", 280, 220);
+            ctx.fillText("YOU DIED!", 280, 300);
+            ctx.font = "30px Arial";
+            ctx.fillText("Try Again?", 320, 500)
+         }
     }
 
     /* This function is called by the render function and is called on each game
@@ -147,11 +189,22 @@ var Engine = (function(global) {
         /* Loop through all of the objects within the allEnemies array and call
          * the render function you have defined.
          */
+        if(item.active === true){
+          item.render();  
+        }
+        if(player.move === false){
+            player.render();
+        }
+        
         allEnemies.forEach(function(enemy) {
             enemy.render();
         });
 
-        player.render();
+        if(player.move === true){
+           player.render(); 
+        }
+        
+        
     }
 
     /* This function does nothing but it could have been a good place to
@@ -159,7 +212,13 @@ var Engine = (function(global) {
      * those sorts of things. It's only called once by the init() method.
      */
     function reset() {
-        // noop
+
+        // Startscreen
+        $('canvas').hide();
+       $('#gameScreen').on('click', function(){
+            $(this).fadeOut();
+            $('canvas').fadeIn();
+       });
     }
 
     /* Go ahead and load all of the images we know we're going to need to
@@ -167,11 +226,23 @@ var Engine = (function(global) {
      * all of these images are properly loaded our game will start.
      */
     Resources.load([
-        'images/stone-block.png',
-        'images/water-block.png',
-        'images/grass-block.png',
-        'images/enemy-bug.png',
-        'images/char-boy.png'
+        'images/street-bottom.png',
+        'images/street-top.png',
+        'images/grass.png',
+        'images/red-car-left.png',
+        'images/blue-car-left.png',
+        'images/green-car-left.png',
+        'images/red-car.png',
+        'images/blue-car.png',
+        'images/green-car.png',
+        'images/char-up2.png',
+        'images/char-up3.png',
+        'images/char-down2.png',
+        'images/char-left2.png',
+        'images/char-right2.png',
+        'images/coin.png',
+        'images/Key.png',
+        'images/dead.png'
     ]);
     Resources.onReady(init);
 
