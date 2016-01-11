@@ -8,5 +8,6 @@ canvas{
 }
 #gameScreen{
 	position:absolute;
-	right:353.5px
+	left:50%;
+	margin-left:-400px;
 }

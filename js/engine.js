@@ -76,17 +76,8 @@ var Engine = (function(global) {
             canvay = event.pageY - 8;
 
          console.log( "X: " + canvax + "Y: " + canvay);
-            if(canvax > 750 && canvay > 550){
-                if(conf.collision === false){
-                    conf.collision = true;
-                    console.log("COLLISION ON");
-                }else{
-                    console.log("COLLISION OFF");
-                    conf.collision = false;
-                }
-                
-            }
 
+            //TODO Add enter button to skip endScreen
             if(conf.endScreen === true){
                 if(canvax > 320 && canvax < 460 && canvay > 480 && canvay < 500){
                     enemy.reset();
@@ -114,10 +105,17 @@ var Engine = (function(global) {
      * render methods.
      */
     function updateEntities(dt) {
+
+        player.control();
+
         allEnemies.forEach(function(enemy) {
             enemy.update(dt);
         });
-        player.update(dt);
+
+        if(player.dir !== "stop"){
+             player.update(dt);
+        }
+
         if(item.active === true){
             item.collision();
         }
@@ -150,7 +148,7 @@ var Engine = (function(global) {
          * and, using the rowImages array, draw the correct image for that
          * portion of the "grid"
          */
-        
+
         for (row = 0; row < numRows; row++) {
             for (col = 0; col < numCols; col++) {
                 /* The drawImage function of the canvas' context element
@@ -166,7 +164,7 @@ var Engine = (function(global) {
 
         renderEntities();
 
-         //UI RENDER HERE
+         //TODO UI RENDER HERE
 
          ctx.font = "30px Arial";
          ctx.fillText("POINTS:" + player.collect,10,590);
@@ -190,21 +188,21 @@ var Engine = (function(global) {
          * the render function you have defined.
          */
         if(item.active === true){
-          item.render();  
+          item.render();
         }
         if(player.move === false){
             player.render();
         }
-        
+
         allEnemies.forEach(function(enemy) {
             enemy.render();
         });
 
         if(player.move === true){
-           player.render(); 
+           player.render();
         }
-        
-        
+
+
     }
 
     /* This function does nothing but it could have been a good place to
@@ -219,6 +217,7 @@ var Engine = (function(global) {
             $(this).fadeOut();
             $('canvas').fadeIn();
        });
+
     }
 
     /* Go ahead and load all of the images we know we're going to need to
@@ -235,13 +234,11 @@ var Engine = (function(global) {
         'images/red-car.png',
         'images/blue-car.png',
         'images/green-car.png',
-        'images/char-up2.png',
-        'images/char-up3.png',
-        'images/char-down2.png',
-        'images/char-left2.png',
-        'images/char-right2.png',
+        'images/char-up.png',
+        'images/char-down.png',
+        'images/char-left.png',
+        'images/char-right.png',
         'images/coin.png',
-        'images/Key.png',
         'images/dead.png'
     ]);
     Resources.onReady(init);

@@ -1,6 +1,11 @@
-frontend-nanodegree-arcade-game
+Coin Collector by shouldz
 ===============================
 
-Students should use this rubric: https://www.udacity.com/course/viewer#!/c-ud015/l-3072058665/m-3072588797
 
-for self-checking their submission.
+How to Install & Play:
+
+1. Copy the files to a directory of your choice
+2. Double click or drag the index.html into your Browser
+3. Follow the Instructions on the Screen
+4. Use your Arrow-keys to move around the Screen
+
