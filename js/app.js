@@ -428,6 +428,7 @@ function generator(){
 
 // Creates Objects on start and generates new ones the whole time
 var player = new Player();
+var enemy = new Enemy();
 var item = new Item();
 var allEnemies = [];
 

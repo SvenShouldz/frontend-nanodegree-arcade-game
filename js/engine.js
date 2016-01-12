@@ -175,7 +175,7 @@ var Engine = (function(global) {
             ctx.fillText(player.collect + " Points", 280, 220);
             ctx.fillText("YOU DIED!", 280, 300);
             ctx.font = "30px Arial";
-            ctx.fillText("Try Again?", 320, 500)
+            ctx.fillText("Try Again?", 320, 500);
          }
     }
 
