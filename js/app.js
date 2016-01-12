@@ -93,36 +93,28 @@ Enemy.prototype = {
     /**
     * @description Generates Enemy() if the conf.enemyLimit is reached it delets the oldest 5 Enemy().
     */
-    generate: function(){
-        window.setInterval(function(){
+    getStat: function(){
+        var y, sprite,
+        rnd = enemy.rnd(-1,1),
+        dir = Math.random() < 0.5 ? conf.canvasWidth : -100;
 
-            if(allEnemies.length >= conf.enemyLimit){
-                allEnemies.splice(0, 5);
-            }
+        if(dir > 100){
+            var topLane = conf.topLanes[rnd];
+            y = topLane;
+            spriteArr = ['images/red-car-left.png','images/blue-car-left.png','images/green-car-left.png'];
 
-                var y, sprite,
-                rnd = enemy.rnd(-1,1),
-                dir = Math.random() < 0.5 ? conf.canvasWidth : -100;
+             sprite = spriteArr[enemy.rnd(-1,2)]
 
-                if(dir > 100){
-                    var topLane = conf.topLanes[rnd];
-                    y = topLane;
-                    sprite = ['images/red-car-left.png','images/blue-car-left.png','images/green-car-left.png'];
+            return [dir, y, sprite];
+        }else{
+           var bottomLane = conf.bottomLanes[rnd];
+            y = bottomLane;
+            spriteArr = ['images/red-car.png','images/blue-car.png','images/green-car.png'];
 
-                    setTimeout(function(){
-                       allEnemies.push(new Enemy(dir, y, sprite[enemy.rnd(-1,2)]));
-                    }, enemy.rnd(0,200));
-                }else{
-                    var bottomLane = conf.bottomLanes[rnd];
-                    y = bottomLane;
-                    sprite = ['images/red-car.png','images/blue-car.png','images/green-car.png'];
+            sprite = spriteArr[enemy.rnd(-1,2)]
 
-                    setTimeout(function(){
-                       allEnemies.push(new Enemy(dir, y, sprite[enemy.rnd(-1,2)]));
-                    }, enemy.rnd(0,200));
-                }
-
-        }, 700);
+            return [dir, y, sprite];
+        }
     },
     /**
     * @description Gets the middle of x-length for collision
@@ -414,16 +406,34 @@ Item.prototype = {
 
 };
 
+/*
+ * @description Generates Enemy() if the conf.enemyLimit is reached it delets the oldest 5 Enemy().
+ */
+function generator(){
+            window.setInterval(function(){
+
+            var stats = enemy.getStat();
+
+            if(allEnemies.length >= conf.enemyLimit){
+                allEnemies.splice(0, 5);
+            }
+
+            setTimeout(function(){
+                allEnemies.push(new Enemy(stats[0], stats[1], stats[2]));
+            }, enemy.rnd(0,200));
+
+
+        }, 700);
+}
+
 // Creates Objects on start and generates new ones the whole time
-
 var player = new Player();
-var enemy = new Enemy();
 var item = new Item();
-
 var allEnemies = [];
 
-enemy.generate();
 item.generate();
+
+generator();
 
 /*
  * @description Listens for keydown and keyup events
