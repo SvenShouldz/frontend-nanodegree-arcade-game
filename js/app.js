@@ -95,7 +95,7 @@ Enemy.prototype = {
     */
     getStat: function(){
         var y, sprite,
-        rnd = enemy.rnd(-1,1),
+        rnd = this.rnd(-1,1),
         dir = Math.random() < 0.5 ? conf.canvasWidth : -100;
 
         if(dir > 100){
@@ -103,7 +103,7 @@ Enemy.prototype = {
             y = topLane;
             spriteArr = ['images/red-car-left.png','images/blue-car-left.png','images/green-car-left.png'];
 
-             sprite = spriteArr[enemy.rnd(-1,2)]
+             sprite = spriteArr[this.rnd(-1,2)];
 
             return [dir, y, sprite];
         }else{
@@ -111,7 +111,7 @@ Enemy.prototype = {
             y = bottomLane;
             spriteArr = ['images/red-car.png','images/blue-car.png','images/green-car.png'];
 
-            sprite = spriteArr[enemy.rnd(-1,2)]
+            sprite = spriteArr[this.rnd(-1,2)];
 
             return [dir, y, sprite];
         }
@@ -216,7 +216,7 @@ Player.prototype = {
                 }
                 break;
             case 'right':
-                if(this.x > conf.canvasWidth - player.width){
+                if(this.x > conf.canvasWidth - this.width){
                     this.dir = 'stop';
                 }else{
                     this.x = this.x + conf.playerSpeed * dt;
@@ -236,7 +236,7 @@ Player.prototype = {
                 }
                 break;
             case 'down':
-                if(this.y > conf.canvasHeight - player.height){
+                if(this.y > conf.canvasHeight - this.height){
                     this.dir = 'stop';
                 }else{
                     this.y = this.y + conf.playerSpeed * dt;
@@ -324,7 +324,7 @@ Item.prototype = {
                 if(this.getTop() < player.getBottom() && this.getBottom() > player.getTop()){
                     player.collect += this.points;
                     this.active = false;
-                    item.generate();
+                    this.generate();
                 }
             }
     },
@@ -332,7 +332,7 @@ Item.prototype = {
     * @description sets randomly generated positions for Item()
     */
     generate:function(){
-       var tile = item.tile();
+       var tile = this.tile();
         this.x = tile[0];
         this.y = tile[1];
         this.active = true;
@@ -352,8 +352,8 @@ Item.prototype = {
     tile: function(){
         var width = conf.colWidth;
         var height = conf.rowHeight;
-        var tileCol = item.rnd(0, Math.floor(conf.canvasWidth / width));
-        var tileRow = item.rnd(100,500);
+        var tileCol = this.rnd(0, Math.floor(conf.canvasWidth / width));
+        var tileRow = this.rnd(100,500);
 
         var tileX = tileCol * width - 100;
         var tileY = tileRow;
